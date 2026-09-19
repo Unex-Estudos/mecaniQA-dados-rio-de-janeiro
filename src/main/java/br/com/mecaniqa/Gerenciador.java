@@ -99,4 +99,41 @@ public class Gerenciador {
         return filaAtendimento.poll();
     }
 
+    public void ordenarPecas(ChaveOrdenacao chave) {
+        for (int i = 0; i < pecas.size() - 1; i++) {
+            for (int j = 0; j < pecas.size() - i - 1; j++) {
+                if (compararPecas(pecas.get(j), pecas.get(j + 1), chave) > 0) {
+                    Peca temporaria = pecas.get(j);
+                    pecas.set(j, pecas.get(j + 1));
+                    pecas.set(j + 1, temporaria);
+                }
+            }
+        }
+    }
+
+    public void ordenarServicos(ChaveOrdenacao chave) {
+        for (int i = 0; i < servicos.size() - 1; i++) {
+            for (int j = 0; j < servicos.size() - i - 1; j++) {
+                if (compararServicos(servicos.get(j), servicos.get(j + 1), chave) > 0) {
+                    Servico temporario = servicos.get(j);
+                    servicos.set(j, servicos.get(j + 1));
+                    servicos.set(j + 1, temporario);
+                }
+            }
+        }
+    }
+
+    private int compararPecas(Peca primeira, Peca segunda, ChaveOrdenacao chave) {
+        if (chave == ChaveOrdenacao.CODIGO_IDENTIFICADOR) {
+            return Integer.compare(primeira.codigo, segunda.codigo);
+        }
+        return primeira.nome.compareToIgnoreCase(segunda.nome);
+    }
+
+    private int compararServicos(Servico primeiro, Servico segundo, ChaveOrdenacao chave) {
+        if (chave == ChaveOrdenacao.CODIGO_IDENTIFICADOR) {
+            return Integer.compare(primeiro.codigo, segundo.codigo);
+        }
+        return primeiro.descricao.compareToIgnoreCase(segundo.descricao);
+    }
 }
