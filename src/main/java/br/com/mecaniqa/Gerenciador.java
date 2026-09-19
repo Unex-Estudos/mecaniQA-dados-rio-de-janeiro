@@ -1,24 +1,22 @@
 package br.com.mecaniqa;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Gerenciador {
-    Peca[] pecas = new Peca[100];
-    Servico[] servicos = new Servico[50];
+    public List<Peca> pecas = new ArrayList<>();
+    public List<Servico> servicos = new ArrayList<>();
+    public List<Cliente> clientes = new ArrayList<>();
+    public List<Pedido> pedidos = new ArrayList<>();
+    public List<OrdemServico> ordensServico = new ArrayList<>();
 
-    private int contadorPecas = 0;
-    private int contadorServicos = 0;   
-
-    /* Gerenciamento de Peças */
     public void adicionarPeca(Peca peca) {
-        if (contadorPecas < pecas.length) {
-            pecas[contadorPecas++] = peca;
-        } else {
-            System.out.println("Limite de peças atingido.");
-        }
+        pecas.add(peca);
     }
 
     public int buscarPeca(int codigo) {
-        for (int i = 0; i < contadorPecas; i++) {
-            if (pecas[i].codigo == codigo) {
+        for (int i = 0; i < pecas.size(); i++) {
+            if (pecas.get(i).codigo == codigo) {
                 return i;
             }
         }
@@ -28,38 +26,30 @@ public class Gerenciador {
     public void atualizarPeca(int codigo, Peca novaPeca) {
         int index = buscarPeca(codigo);
         if (index != -1) {
-            pecas[index] = novaPeca;
-            System.out.println("Peça atualizada com sucesso.");
+            pecas.set(index, novaPeca);
+            System.out.println("Peca atualizada com sucesso.");
         } else {
-            System.out.println("Peça não encontrada.");
+            System.out.println("Peca nao encontrada.");
         }
     }
 
     public void removerPeca(int codigo) {
         int index = buscarPeca(codigo);
         if (index != -1) {
-            for (int i = index; i < contadorPecas - 1; i++) {
-                pecas[i] = pecas[i + 1];
-            }
-            pecas[--contadorPecas] = null;
-            System.out.println("Peça removida com sucesso.");
+            pecas.remove(index);
+            System.out.println("Peca removida com sucesso.");
         } else {
-            System.out.println("Peça não encontrada.");
+            System.out.println("Peca nao encontrada.");
         }
     }
 
-    /* Gerenciamento de Serviços */
     public void adicionarServico(Servico servico) {
-        if (contadorServicos < servicos.length) {
-            servicos[contadorServicos++] = servico;
-        } else {
-            System.out.println("Limite de serviços atingido.");
-        }
+        servicos.add(servico);
     }
 
     public int buscarServico(int codigo) {
-        for (int i = 0; i < contadorServicos; i++) {
-            if (servicos[i].codigo == codigo) {
+        for (int i = 0; i < servicos.size(); i++) {
+            if (servicos.get(i).codigo == codigo) {
                 return i;
             }
         }
@@ -69,23 +59,33 @@ public class Gerenciador {
     public void atualizarServico(int codigo, Servico novoServico) {
         int index = buscarServico(codigo);
         if (index != -1) {
-            servicos[index] = novoServico;
-            System.out.println("Serviço atualizado com sucesso.");
+            servicos.set(index, novoServico);
+            System.out.println("Servico atualizado com sucesso.");
         } else {
-            System.out.println("Serviço não encontrado.");
+            System.out.println("Servico nao encontrado.");
         }
     }
 
     public void removerServico(int codigo) {
         int index = buscarServico(codigo);
         if (index != -1) {
-            for (int i = index; i < contadorServicos - 1; i++) {
-                servicos[i] = servicos[i + 1];
-            }
-            servicos[--contadorServicos] = null;
-            System.out.println("Serviço removido com sucesso.");
+            servicos.remove(index);
+            System.out.println("Servico removido com sucesso.");
         } else {
-            System.out.println("Serviço não encontrado.");
+            System.out.println("Servico nao encontrado.");
         }
-    }   
+    }
+
+    public void adicionarCliente(Cliente cliente) {
+        clientes.add(cliente);
+    }
+
+    public void registrarPedido(Pedido pedido) {
+        pedidos.add(pedido);
+    }
+
+    public void registrarOrdemServico(OrdemServico ordemServico) {
+        ordensServico.add(ordemServico);
+    }
+
 }
