@@ -21,4 +21,7 @@ public class Cliente {
         carros.add(carro);
     }
 
+    public String toCsv() {
+        return codigo + ";" + nome + ";" + telefoneWhatsapp + ";" + email;
+    }
 }

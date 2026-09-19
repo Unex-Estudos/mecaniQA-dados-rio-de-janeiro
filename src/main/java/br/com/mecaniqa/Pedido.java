@@ -44,4 +44,7 @@ public class Pedido {
         status = StatusPedido.FINALIZADO;
     }
 
+    public String toCsv() {
+        return codigo + ";" + status + ";" + calcularTotal();
+    }
 }

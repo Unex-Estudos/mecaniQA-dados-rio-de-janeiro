@@ -1,11 +1,14 @@
 package br.com.mecaniqa;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Scanner;
 
 public class MecaniQAApplication {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Gerenciador gerenciador = new Gerenciador();
         int choice = 0;
 
         do {
@@ -74,8 +77,15 @@ public class MecaniQAApplication {
                     // Lógica para buscar serviço
                     break;
                 case 0:
+                    try {
+                        ExportadorCsv.exportar(gerenciador, Path.of("dados"));
+                        System.out.println("Arquivos CSV exportados com sucesso.");
+                    } catch (IOException e) {
+                        System.out.println("Nao foi possivel exportar os arquivos: " + e.getMessage());
+                    }
                     System.out.println("Saindo do sistema...");
                     scanner.close();
+                    break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }

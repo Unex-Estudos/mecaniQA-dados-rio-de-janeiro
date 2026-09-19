@@ -21,4 +21,8 @@ public class Peca {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
+    public String toCsv() {
+        return codigo + ";" + nome + ";" + fabricante + ";" + precoCusto + ";"
+                + precoVenda + ";" + quantidadeEstoque;
+    }
 }

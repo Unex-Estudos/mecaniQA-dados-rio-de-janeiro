@@ -13,4 +13,7 @@ public class ItemPedido {
         return peca.precoVenda * quantidade;
     }
 
+    public String toCsv(int codigoPedido) {
+        return codigoPedido + ";" + peca.codigo + ";" + quantidade + ";" + subtotal();
+    }
 }

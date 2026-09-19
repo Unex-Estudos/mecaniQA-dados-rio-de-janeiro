@@ -67,4 +67,7 @@ public class OrdemServico {
         status = StatusOrdemServico.FINALIZADA;
     }
 
+    public String toCsv() {
+        return codigo + ";" + status + ";" + quantidadeServicos() + ";" + valorTotal();
+    }
 }

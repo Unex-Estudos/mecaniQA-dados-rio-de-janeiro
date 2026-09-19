@@ -16,4 +16,7 @@ public class Servico {
         this.duracaoEstimada = duracaoEstimada;
     }
 
+    public String toCsv() {
+        return codigo + ";" + descricao + ";" + precoServico + ";" + duracaoEstimada;
+    }
 }

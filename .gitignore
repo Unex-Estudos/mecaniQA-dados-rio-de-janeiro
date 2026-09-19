@@ -4,6 +4,7 @@
 # Gradle
 .gradle/
 build/
+dados/
 gradlew
 gradlew.bat
 

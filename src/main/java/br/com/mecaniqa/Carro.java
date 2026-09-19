@@ -13,4 +13,7 @@ public class Carro {
         this.estilo = estilo;
     }
 
+    public String toCsv(int codigoCliente) {
+        return codigoCliente + ";" + modelo + ";" + placa + ";" + ano + ";" + estilo;
+    }
 }
