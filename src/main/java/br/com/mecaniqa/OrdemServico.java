@@ -2,6 +2,7 @@ package br.com.mecaniqa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class OrdemServico {
     private static int proximoCodigo = 1;
@@ -43,6 +44,23 @@ public class OrdemServico {
             total += servico.precoServico;
         }
         return total;
+    }
+
+    public boolean aguardarExecucao(Queue<Servico> filaAtendimento) {
+        if (status != StatusOrdemServico.EM_ABERTO) {
+            System.out.println("Somente uma OS aberta pode entrar na fila.");
+            return false;
+        }
+
+        status = StatusOrdemServico.AGUARDANDO_EXECUCAO;
+        for (Servico servico : servicos) {
+            filaAtendimento.add(servico);
+        }
+        return true;
+    }
+
+    public void iniciarExecucao() {
+        status = StatusOrdemServico.EM_EXECUCAO;
     }
 
     public void finalizar() {

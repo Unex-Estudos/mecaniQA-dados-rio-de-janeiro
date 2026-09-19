@@ -1,7 +1,9 @@
 package br.com.mecaniqa;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Gerenciador {
     public List<Peca> pecas = new ArrayList<>();
@@ -9,6 +11,7 @@ public class Gerenciador {
     public List<Cliente> clientes = new ArrayList<>();
     public List<Pedido> pedidos = new ArrayList<>();
     public List<OrdemServico> ordensServico = new ArrayList<>();
+    public Queue<Servico> filaAtendimento = new LinkedList<>();
 
     public void adicionarPeca(Peca peca) {
         pecas.add(peca);
@@ -86,6 +89,14 @@ public class Gerenciador {
 
     public void registrarOrdemServico(OrdemServico ordemServico) {
         ordensServico.add(ordemServico);
+    }
+
+    public void enviarParaFila(OrdemServico ordemServico) {
+        ordemServico.aguardarExecucao(filaAtendimento);
+    }
+
+    public Servico executarProximoServico() {
+        return filaAtendimento.poll();
     }
 
 }
