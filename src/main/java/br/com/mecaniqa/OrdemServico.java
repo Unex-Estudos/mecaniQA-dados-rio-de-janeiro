@@ -15,6 +15,11 @@ public class OrdemServico {
         codigo = proximoCodigo++;
     }
 
+    public OrdemServico(int codigo) {
+        this.codigo = codigo;
+        proximoCodigo = Math.max(proximoCodigo, codigo + 1);
+    }
+
     public boolean adicionarServico(Servico servico) {
         if (status != StatusOrdemServico.EM_ABERTO) {
             System.out.println("OS fechada. Nao e possivel adicionar novos servicos.");
