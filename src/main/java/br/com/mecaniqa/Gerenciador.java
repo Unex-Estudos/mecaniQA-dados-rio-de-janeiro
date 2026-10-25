@@ -6,90 +6,84 @@ import java.util.List;
 import java.util.Queue;
 
 public class Gerenciador {
-    public List<Peca> pecas = new ArrayList<>();
-    public List<Servico> servicos = new ArrayList<>();
-    public List<Cliente> clientes = new ArrayList<>();
+    private final List<Peca> pecasInternos = new ArrayList<>();
+    public final List<Peca> pecas = java.util.Collections.unmodifiableList(pecasInternos);
+    private final List<Servico> servicosInternos = new ArrayList<>();
+    public final List<Servico> servicos = java.util.Collections.unmodifiableList(servicosInternos);
+    private final List<Cliente> clientesInternos = new ArrayList<>();
+    public final List<Cliente> clientes = java.util.Collections.unmodifiableList(clientesInternos);
     public List<Pedido> pedidos = new ArrayList<>();
-    public List<OrdemServico> ordensServico = new ArrayList<>();
+    private final List<OrdemServico> ordensServicoInternos = new ArrayList<>();
+    public final List<OrdemServico> ordensServico = java.util.Collections.unmodifiableList(ordensServicoInternos);
     public Queue<Servico> filaAtendimento = new LinkedList<>();
 
-    public void adicionarPeca(Peca peca) {
-        pecas.add(peca);
+    private final Indexador<Peca> indicePeca = new Indexador<>(r -> r.codigo);
+    public void adicionarPeca(Peca registro) {
+        indicePeca.inserir(registro);
+        pecasInternos.add(registro);
     }
-
-    public int buscarPeca(int codigo) {
-        for (int i = 0; i < pecas.size(); i++) {
-            if (pecas.get(i).codigo == codigo) {
-                return i;
-            }
-        }
-        return -1;
+    public Peca buscarPeca(int codigo) { return indicePeca.buscar(codigo); }
+    public void listarPecas(java.util.function.Consumer<Peca> exibir) { indicePeca.emOrdem(exibir); }
+    public void atualizarPeca(int codigo, Peca novo) {
+        if (novo == null || novo.codigo != codigo) throw new IllegalArgumentException("O ID nao pode mudar");
+        Peca atual = buscarPeca(codigo);
+        if (atual == null) throw new IllegalArgumentException("ID nao encontrado");
+        atual.nome = novo.nome;
+        atual.fabricante = novo.fabricante;
+        atual.precoCusto = novo.precoCusto;
+        atual.precoVenda = novo.precoVenda;
+        atual.quantidadeEstoque = novo.quantidadeEstoque;
     }
-
-    public void atualizarPeca(int codigo, Peca novaPeca) {
-        int index = buscarPeca(codigo);
-        if (index != -1) {
-            pecas.set(index, novaPeca);
-            System.out.println("Peca atualizada com sucesso.");
-        } else {
-            System.out.println("Peca nao encontrada.");
-        }
-    }
-
     public void removerPeca(int codigo) {
-        int index = buscarPeca(codigo);
-        if (index != -1) {
-            pecas.remove(index);
-            System.out.println("Peca removida com sucesso.");
-        } else {
-            System.out.println("Peca nao encontrada.");
-        }
+        Peca atual = buscarPeca(codigo);
+        if (atual == null) throw new IllegalArgumentException("ID nao encontrado");
+        for (Pedido pedido : pedidos) for (ItemPedido item : pedido.itens)
+            if (item.peca == atual) throw new IllegalArgumentException("Peca vinculada a pedido");
+        pecasInternos.remove(atual);
+        // Remocao fisica por reconstrucao: O(n log n), fora do caminho de busca.
+        indicePeca.limpar();
+        for (Peca registro : pecas) indicePeca.inserir(registro);
     }
-
-    public void adicionarServico(Servico servico) {
-        servicos.add(servico);
+    private final Indexador<Servico> indiceServico = new Indexador<>(r -> r.codigo);
+    public void adicionarServico(Servico registro) {
+        indiceServico.inserir(registro);
+        servicosInternos.add(registro);
     }
-
-    public int buscarServico(int codigo) {
-        for (int i = 0; i < servicos.size(); i++) {
-            if (servicos.get(i).codigo == codigo) {
-                return i;
-            }
-        }
-        return -1;
+    public Servico buscarServico(int codigo) { return indiceServico.buscar(codigo); }
+    public void listarServicos(java.util.function.Consumer<Servico> exibir) { indiceServico.emOrdem(exibir); }
+    public void atualizarServico(int codigo, Servico novo) {
+        if (novo == null || novo.codigo != codigo) throw new IllegalArgumentException("O ID nao pode mudar");
+        Servico atual = buscarServico(codigo);
+        if (atual == null) throw new IllegalArgumentException("ID nao encontrado");
+        atual.descricao = novo.descricao;
+        atual.precoServico = novo.precoServico;
+        atual.duracaoEstimada = novo.duracaoEstimada;
     }
-
-    public void atualizarServico(int codigo, Servico novoServico) {
-        int index = buscarServico(codigo);
-        if (index != -1) {
-            servicos.set(index, novoServico);
-            System.out.println("Servico atualizado com sucesso.");
-        } else {
-            System.out.println("Servico nao encontrado.");
-        }
-    }
-
     public void removerServico(int codigo) {
-        int index = buscarServico(codigo);
-        if (index != -1) {
-            servicos.remove(index);
-            System.out.println("Servico removido com sucesso.");
-        } else {
-            System.out.println("Servico nao encontrado.");
-        }
+        Servico atual = buscarServico(codigo);
+        if (atual == null) throw new IllegalArgumentException("ID nao encontrado");
+        for (OrdemServico os : ordensServico) if (os.servicos.contains(atual))
+            throw new IllegalArgumentException("Servico vinculado a OS");
+        servicosInternos.remove(atual);
+        // Remocao fisica por reconstrucao: O(n log n), fora do caminho de busca.
+        indiceServico.limpar();
+        for (Servico registro : servicos) indiceServico.inserir(registro);
     }
-
-    public void adicionarCliente(Cliente cliente) {
-        clientes.add(cliente);
+    private final Indexador<Cliente> indiceCliente = new Indexador<>(r -> r.codigo);
+    public void adicionarCliente(Cliente registro) {
+        indiceCliente.inserir(registro);
+        clientesInternos.add(registro);
     }
-
-    public void registrarPedido(Pedido pedido) {
-        pedidos.add(pedido);
+    public Cliente buscarCliente(int codigo) { return indiceCliente.buscar(codigo); }
+    public void listarClientes(java.util.function.Consumer<Cliente> exibir) { indiceCliente.emOrdem(exibir); }
+    private final Indexador<OrdemServico> indiceOrdemServico = new Indexador<>(r -> r.codigo);
+    public void registrarOrdemServico(OrdemServico registro) {
+        indiceOrdemServico.inserir(registro);
+        ordensServicoInternos.add(registro);
     }
-
-    public void registrarOrdemServico(OrdemServico ordemServico) {
-        ordensServico.add(ordemServico);
-    }
+    public OrdemServico buscarOrdemServico(int codigo) { return indiceOrdemServico.buscar(codigo); }
+    public void listarOrdemServicos(java.util.function.Consumer<OrdemServico> exibir) { indiceOrdemServico.emOrdem(exibir); }
+    public void registrarPedido(Pedido pedido) { pedidos.add(pedido); }
 
     public void enviarParaFila(OrdemServico ordemServico) {
         ordemServico.aguardarExecucao(filaAtendimento);
@@ -104,8 +98,8 @@ public class Gerenciador {
             for (int j = 0; j < pecas.size() - i - 1; j++) {
                 if (compararPecas(pecas.get(j), pecas.get(j + 1), chave) > 0) {
                     Peca temporaria = pecas.get(j);
-                    pecas.set(j, pecas.get(j + 1));
-                    pecas.set(j + 1, temporaria);
+                    pecasInternos.set(j, pecas.get(j + 1));
+                    pecasInternos.set(j + 1, temporaria);
                 }
             }
         }
@@ -116,8 +110,8 @@ public class Gerenciador {
             for (int j = 0; j < servicos.size() - i - 1; j++) {
                 if (compararServicos(servicos.get(j), servicos.get(j + 1), chave) > 0) {
                     Servico temporario = servicos.get(j);
-                    servicos.set(j, servicos.get(j + 1));
-                    servicos.set(j + 1, temporario);
+                    servicosInternos.set(j, servicos.get(j + 1));
+                    servicosInternos.set(j + 1, temporario);
                 }
             }
         }
