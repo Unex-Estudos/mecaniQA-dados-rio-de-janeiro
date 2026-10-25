@@ -14,6 +14,11 @@ public class Pedido {
         codigo = proximoCodigo++;
     }
 
+    public Pedido(int codigo) {
+        this.codigo = codigo;
+        proximoCodigo = Math.max(proximoCodigo, codigo + 1);
+    }
+
     public boolean adicionarItem(Peca peca, int quantidade) {
         if (status == StatusPedido.FINALIZADO) {
             System.out.println("Pedido finalizado. Nao e possivel adicionar novas pecas.");
